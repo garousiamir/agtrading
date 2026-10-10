@@ -1,0 +1,49 @@
+[project]
+name = "crypto-platform"
+version = "0.0.0"
+description = "Personal BTC/ETH spot research and trading platform (single owner)."
+requires-python = ">=3.12,<3.13"
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "pytest==8.3.4",
+    "ruff==0.8.6",
+]
+
+[build-system]
+requires = ["hatchling==1.27.0"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = [
+    "packages/core/src/cp_core",
+    "packages/ingest/src/cp_ingest",
+    "packages/catalog/src/cp_catalog",
+    "packages/features/src/cp_features",
+    "packages/strategy/src/cp_strategy",
+    "packages/sim/src/cp_sim",
+    "packages/validation/src/cp_validation",
+    "packages/stats/src/cp_stats",
+    "packages/risk/src/cp_risk",
+    "packages/oms/src/cp_oms",
+    "packages/llm/src/cp_llm",
+    "packages/signals/src/cp_signals",
+    "apps/api/src/cp_api",
+    "apps/worker-research/src/cp_worker_research",
+    "apps/worker-eval/src/cp_worker_eval",
+]
+# cp_execution is deliberately NOT part of this distribution: it is the only
+# process allowed to hold exchange credentials (CLAUDE.md rule 11) and will be
+# packaged and deployed separately.
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "S102", "S307"]  # S102 exec, S307 eval (rule 16)
