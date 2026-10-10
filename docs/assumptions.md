@@ -1,25 +1,25 @@
 # Assumptions and open questions
 
-Every OPEN item from `docs/01-decisions.md`, plus assumptions made while
-building. Nothing here is resolved until the owner says so.
+Every OPEN item from `docs/01-decisions.md`, the owner's answers, and
+assumptions made while building.
 
-## Open items (unresolved)
+## Owner answers (2026-10-10)
 
-| # | Item | Source | Needed by | Status |
-|---|---|---|---|---|
-| 1 | Which exchange accounts the owner can open as an Irish resident | 01 Residence and access; 03 | Phase 7 (testnet), phase 9 (live) | **Unresolved** |
-| 2 | Monthly Claude API spend cap (suggested €20) | 01 Budget | Phase 6 | **Unresolved** |
-| 3 | Pilot capital amount (an amount the owner can lose entirely) | 01 Capital | Phase 9; must be typed by the owner | **Unresolved** |
-| 4 | Host provider (any Linux VPS) | 01 Hosting | Phase 6 | **Unresolved** |
-| 5 | Which exchange testnet adapter to build (Binance Spot Testnet preferred, else OKX demo or Bybit testnet) | 03; 06 Phase 7 prompt | Phase 7 | **Unresolved** |
-| 6 | Promotion thresholds (max drawdown limit, paper-vs-backtest tolerance) must be fixed before any evaluation | 05 section 5 | Phase 5 | **Unresolved** |
+| # | Item | Owner's answer | Status / consequence |
+|---|---|---|---|
+| 1 | Exchange accounts the owner can open | "All" | **Recorded, with a legal caveat.** The MiCA transitional period ended on 1 July 2026, so a provider serving Irish residents must be MiCA-authorised. Before any live use, the chosen venue must appear in the ESMA CASP register. Being able to open an account is not the same as the provider being authorised. Reported as authorised by the Central Bank of Ireland: Kraken (to verify). Reported as having lost EU access: Binance (unverified, third-party source). |
+| 2 | Claude API monthly cap | Can buy the Max plan (€100) | **Conflict, needs an answer.** The Claude Max plan is a consumer subscription for claude.ai and Claude Code. It does not provide an API key for the platform's server-side Claude review module (`01-decisions.md`, Claude's role). That module needs a separate pay-as-you-go Anthropic API key from console.anthropic.com. Max is still useful for building with Claude Code. Assumption until answered: a hard cap in config, default **€20/month**, owner-configurable up to **€100/month**. |
+| 3 | Pilot capital | Not given | **Unresolved.** Only needed in phase 9, where the owner must type it in themselves. |
+| 4 | Host provider | Shared PHP hosting | **Conflict, needs an answer.** The architecture needs Docker, long-running Python 3.12 processes, PostgreSQL 16, Redis and an isolated execution container. Shared PHP hosting cannot run any of these. Options: (a) run locally only (`APP_ENV=local`, free), (b) a small Linux VPS (typically a few € per month; a paid service, so it needs the owner's approval under rule 19). Assumption until answered: **local only**. Phases 1–5 do not need a host. |
+| 5 | Phase 7 testnet | Binance Spot Testnet, plus others such as CoinEx if possible | **Partly resolved.** Primary: Binance Spot Testnet (order plumbing only; a testnet uses fake funds, so its EU status does not matter). CoinEx: no public spot testnet or sandbox was found, and its MiCA status is unconfirmed. Without a sandbox, testing a CoinEx adapter would mean real orders, which the live lock forbids before phase 9. The adapter interface will be venue-agnostic so CoinEx can be added if a sandbox exists. Re-check in phase 7. Fallback testnets: OKX demo, Bybit testnet. |
+| 6 | Promotion thresholds | "Do whatever you think is better" | **Resolved.** Set in `docs/promotion-policy.md` (v1), fixed now, before any evaluation. |
+| 7 | Repo name | `agtrading` is OK | **Resolved.** |
 
 ## Assumptions made in phase 0
 
 - **Repo layout.** The spec pack was moved to the repo root: `CLAUDE.md` at the
   root, spec files in `docs/`, and the pack's own README kept as
-  `docs/00-spec-pack-readme.md`. Code lives in this repo (`agtrading`) rather
-  than a new repo named `crypto-platform`.
+  `docs/00-spec-pack-readme.md`.
 - **Python tooling.** Python 3.12 (per `04-architecture.md`), managed with `uv`;
   `uv.lock` is the committed lockfile (rule 18). Dev tools so far: pytest, ruff.
 - **Package naming.** Each package is an importable module prefixed `cp_`
